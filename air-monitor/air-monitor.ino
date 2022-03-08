@@ -1,6 +1,17 @@
 #include<string.h>
+#include <NTPClient.h>
+#include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
+#include "FirebaseESP8266.h"
+
+
 #define PM1PIN 12//DSM501A input D6 on ESP8266
 #define PM25PIN 14
+#define FIREBASE_HOST "airmonitor-7d236-default-rtdb.firebaseio.com"
+#define FIREBASE_AUTH "foEjp2IfD2gglxcSxPHrrhNyPN1xCgqPNnJ9paxx"
+#define WIFI_SSID "Wi-Fi_IoT"                                          
+#define WIFI_PASSWORD "qwertyui"
+
 byte buff[2];
 unsigned long durationPM1;
 unsigned long durationPM25;
@@ -9,11 +20,18 @@ unsigned long endtime;
 unsigned long sampletime_ms = 30000;
 unsigned long lowpulseoccupancyPM1 = 0;
 unsigned long lowpulseoccupancyPM25 = 0;
-char my_str[] = "GOOD";
 
- 
+IPAddress ip;
+FirebaseData firebaseData;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
+
+
 int i=0;
 
+String toString(const IPAddress& address) {
+  return String() + address[0] + "." + address[1] + "." + address[2] + "." + address[3];
+}
 
 
 int getACQI( int sensor, float density ){  
@@ -48,9 +66,97 @@ int getACQI( int sensor, float density ){
   }
 }
 
+
+void updateDatabase()
+{
+  String ipString = toString(ip);
+  Serial.println();
+
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  Firebase.reconnectWiFi(true);
+  firebaseData.setBSSLBufferSize(1024, 1024);
+
+  
+  firebaseData.setResponseSize(1024);
+
+  String wifiMacString = WiFi.macAddress();
+  String path = "/" + wifiMacString;
+  timeClient.update();
+  timeClient.setTimeOffset(0);
+
+  String jsonStr = "";
+
+  FirebaseJson json1;
+
+  FirebaseJsonData jsonObj;
+  long timeStamp = timeClient.getEpochTime();
+  json1.set("/ValuePM1",calculateConcentration(lowpulseoccupancyPM1,30));
+  json1.set("/ValuePM25",calculateConcentration(lowpulseoccupancyPM25,30));
+  json1.set("/IP", ipString);
+  json1.set("/Timestamp", (String)timeStamp);
+
+  Serial.println("------------------------------------");
+  Serial.println("JSON Data");
+  json1.toString(jsonStr, true);
+  Serial.println(jsonStr);
+  Serial.println("------------------------------------");
+
+  Serial.println("------------------------------------");
+  Serial.println("Set JSON test...");
+
+  if (Firebase.push(firebaseData, path, json1))
+  {
+    Serial.println("PASSED");
+    Serial.println("PATH: " + firebaseData.dataPath());
+    Serial.println("TYPE: " + firebaseData.dataType());
+    Serial.print("VALUE: ");
+
+    Serial.println("------------------------------------");
+    Serial.println();
+
+ 
+
+  }
+  else
+  {
+    Serial.println("FAILED");
+    Serial.println("REASON: " + firebaseData.errorReason());
+    Serial.println("------------------------------------");
+    Serial.println();
+
+  
+
+  }
+
+}
+
+
+
+
+
+
 void setup()
 {
+
+  timeClient.begin();
   Serial.begin(9600);
+
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print(".");
+    delay(300);
+  }
+  ip = WiFi.localIP();
+
+
+  Serial.println();
+  Serial.print("Connected with IP: ");
+  Serial.println(WiFi.localIP());
+  Serial.println();
+  Serial.println();
+ 
   Serial.println("Starting please wait 30s");
   pinMode(PM1PIN,INPUT);
   pinMode(PM25PIN,INPUT);
@@ -72,6 +178,9 @@ float calculateConcentration(long lowpulseInMicroSeconds, long durationinSeconds
 
 void loop()
 {
+
+  timeClient.update();
+  
   durationPM1 = pulseIn(PM1PIN, LOW);
   durationPM25 = pulseIn(PM25PIN, LOW);
   
