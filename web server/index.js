@@ -1,10 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyAIdXk3Ia28cgFMZISemJZMJk0bPlnxjfQ",
     authDomain: "airmonitor-7d236.firebaseapp.com",
@@ -16,15 +9,36 @@ const firebaseConfig = {
     measurementId: "G-HY0K01LG53"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 
-var firebaseRef = firebase.database().ref('info');
 
-firebaseRef.once("value", function(snapshot) {
-    var data = snapshot.val();
-    for (let i in data) {
-        console.log(data[i]);
+var database;
+
+database = firebase.database();
+var ref = database.ref('info');
+
+
+ref.on('value', gotData, errData);
+
+function gotData(data) {
+    console.log(data.val());
+    var dataDB = data.val();
+    console.log(JSON.stringify(dataDB));
+    var keys = Object.keys(dataDB);
+    console.log(keys);
+    for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        var a = dataDB[k];
+        console.log(a);
     }
-})
+
+}
+
+
+
+
+function errData(err) {
+    console.log("Err!");
+    console.log(err);
+}
