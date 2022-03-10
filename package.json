@@ -1,0 +1,23 @@
+{
+    "name": "Air-Monitor",
+    "version": "1.0.0",
+    "description": "Air Monitor station working with DSM501A sensor",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ivan-iliev/Air-Monitor.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ivan-iliev/Air-Monitor/issues"
+    },
+    "homepage": "https://github.com/ivan-iliev/Air-Monitor#readme",
+    "dependencies": {
+        "firebase": "^9.6.8"
+    }
+}
