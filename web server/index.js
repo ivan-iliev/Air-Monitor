@@ -16,7 +16,7 @@ firebase.analytics();
 var database;
 
 database = firebase.database();
-var ref = database.ref('info');
+var ref = database.ref('CC:50:E3:60:EF:C1');
 
 
 ref.on('value', gotData, errData);
