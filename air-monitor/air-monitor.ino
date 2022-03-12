@@ -246,5 +246,7 @@ void loop()
     lowpulseoccupancyPM1 = 0;
     lowpulseoccupancyPM25 = 0;
     starttime = millis();
+
+    updateDatabase();
   } 
 }
