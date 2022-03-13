@@ -22,6 +22,77 @@ var database;
 database = firebase.database();
 var ref = database.ref('CC:50:E3:60:EF:C1');
 
+const ctx = document.getElementById('myChart').getContext('2d');
+const ctx2 = document.getElementById('myLineChart').getContext('2d');
+
+
+const data = {
+    labels: timestampArr,
+    datasets: [{
+            label: 'PM1',
+            data: valuesPM1,
+            borderColor: 'rgba(75, 192, 20, 0.2)',
+            backgroundColor: 'rgba(75, 192, 20, 1)',
+        },
+        {
+            label: 'PM2',
+            data: valuesPM25,
+            borderColor: 'rgba(75, 0, 0, 0.2)',
+            backgroundColor: 'rgba(75, 0, 0, 1)',
+        }
+    ]
+};
+
+const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
+const myLineChart = new Chart(ctx2, {
+    type: 'line',
+    data: data,
+    options: {
+        responsive: true,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
+        stacked: false,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Chart.js Line Chart - Multi Axis'
+            }
+        },
+        scales: {
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+
+                // grid line settings
+                grid: {
+                    drawOnChartArea: false, // only want the grid lines for one axis to show up
+                },
+            },
+        }
+    },
+});
+
 
 ref.on('value', gotData, errData);
 
@@ -66,38 +137,7 @@ console.log(valuesPM25);
 console.log(timestampArr);
 
 
-const ctx = document.getElementById('myChart').getContext('2d');
 
-const DATA_COUNT = 7;
-const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
+
 
 //const labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'];
-
-const data = {
-    labels: timestampArr,
-    datasets: [{
-            label: 'PM1',
-            data: valuesPM1,
-            borderColor: 'rgba(75, 192, 20, 0.2)',
-            backgroundColor: 'rgba(75, 192, 20, 1)',
-        },
-        {
-            label: 'PM2',
-            data: valuesPM25,
-            borderColor: 'rgba(75, 192, 20, 0.2)',
-            backgroundColor: 'rgba(75, 192, 20, 1)',
-        }
-    ]
-};
-
-const myChart = new Chart(ctx, {
-    type: 'bar',
-    data: data,
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
