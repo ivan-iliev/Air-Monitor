@@ -38,29 +38,29 @@ int getACQI( int sensor, float density ){
   if ( sensor == 0 ) {  //PM2,5
     if ( density == 0 ) {
       return 0; 
-    } else if ( density <= 15 ) {
+    } else if ( density <= 15 ) {//good
       return 25 ;
-    } else if ( density > 15 && density <= 30 ) {
+    } else if ( density > 15 && density <= 30 ) {//acceptable
       return 50;
-    } else if ( density > 30 && density <= 55 ) {
+    } else if ( density > 30 && density <= 55 ) {//moderate
       return 75;
-    } else if ( density > 55 && density <= 110 ) {
+    } else if ( density > 55 && density <= 110 ) {//heavy
       return 100;
-    } else {
+    } else {//severe
       return 150;
     }
   } else {              //PM10
     if ( density == 0 ) {
       return 0; 
-    } else if ( density <= 25 ) {
+    } else if ( density <= 25 ) {//good
       return 25 ;
-    } else if ( density > 25 && density <= 50 ) {
+    } else if ( density > 25 && density <= 50 ) {//acceptable
       return 50;
-    } else if ( density > 50 && density <= 90 ) {
+    } else if ( density > 50 && density <= 90 ) {//moderate
       return 75;
-    } else if ( density > 90 && density <= 180 ) {
+    } else if ( density > 90 && density <= 180 ) {//heavy
       return 100;
-    } else {
+    } else {//severe
       return 150;
     }
   }
