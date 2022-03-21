@@ -9,8 +9,8 @@
 #define PM25PIN 14
 #define FIREBASE_HOST "airmonitor-7d236-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "foEjp2IfD2gglxcSxPHrrhNyPN1xCgqPNnJ9paxx"
-#define WIFI_SSID "Wi-Fi_IoT"                                          
-#define WIFI_PASSWORD "qwertyui"
+#define WIFI_SSID "Leni'sPhone"                                         
+#define WIFI_PASSWORD "osxy2539"
 
 byte buff[2];
 unsigned long durationPM1;
